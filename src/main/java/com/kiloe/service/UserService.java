@@ -1,8 +1,10 @@
 package com.kiloe.service;
 
-import com.kiloe.repository.UserRepository;
 import com.kiloe.entity.User;
 import com.kiloe.entity.Role;
+import com.kiloe.repository.UserRepository;
+import com.kiloe.dto.RegisterRequest;
+
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,20 +16,26 @@ public class UserService {
 	
 	private final PasswordEncoder passwordEncoder;
 	
-	public UserService(UserRepository userRepository) {
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 	}
 	
-	public void registerCustomer(RegisterRequest request) {
+	public User register(RegisterRequest request) {
 		
-		String email = request.getEmail().trim().toLowerCase(LocalDate.ROOT);
+		String email = request.email().toLowerCase().trim();
 		
 		if(userRepository.existsByEmail(email)) {
-			throw new RuntimeException("Email is already registered: " + email);
+			throw new IllegalStateException("Email is already registered");
 		}
 		
-		UserRepository userRepository = new User();
-		userRepository.setFirstName(request.getFirstName().trim());
+		User user = new User();
+		user.setFirstName(request.firstName().trim());
+		user.setLastName(request.lastName().trim());
+		user.setEmail(email);
+		user.setPassword(passwordEncoder.encode(request.password()));
+		user.setRole(Role.CUSTOMER);
+		user.setEnabled(true);
+		return userRepository.save(user);
 	}
 }

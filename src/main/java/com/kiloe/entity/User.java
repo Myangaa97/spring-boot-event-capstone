@@ -1,6 +1,5 @@
 package com.kiloe.entity;
 
-
 import jakarta.persistence.*;
 
 @Entity
@@ -17,19 +16,19 @@ public class User {
 	@Column(name = "last_name", nullable = false, length = 50)
 	private String lastName;
 	
-	@Column(nullable = false, length = 100)
+	@Column(unique = true, nullable = false, length = 100)
 	private String email;
 	
-	@Column(nullable = false)
+	@Column(nullable = false, length = 255)
 	private String password;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20)
-	private Role role;
+	private Role role = Role.CUSTOMER;
 	
 	@Column(nullable = false)
 	private boolean enabled = true;
-	
+		
 	public User() {
 		
 	}
