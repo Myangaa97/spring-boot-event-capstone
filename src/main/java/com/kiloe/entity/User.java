@@ -24,7 +24,7 @@ public class User {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20)
-	private Role role = Role.CUSTOMER;
+	private Role role = Role.ROLE_CUSTOMER;
 	
 	@Column(nullable = false)
 	private boolean enabled = true;
