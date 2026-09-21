@@ -1,5 +1,6 @@
 package com.kiloe.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,10 @@ import com.kiloe.entity.Venue;
 public interface EventRepository extends JpaRepository<Event, Long> {
 	
 	List<Event> findByCategoryAndPublishedTrueOrderByEventDateAsc(EventCategory category);
+	
+	List<Event> findByPublishedTrueAndEventDateGreaterThanEqualOrderByEventDateAsc(LocalDate date);
+	
+	List<Event> findAllByOrderByEventDateDesc();
 	
 	List<Event> findByVenue(Venue venue);
 	
