@@ -14,16 +14,22 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kiloe.entity.EventCategory;
+import com.kiloe.entity.Venue;
 import com.kiloe.service.EventCategoryService;
+import com.kiloe.service.VenueService;
 
 @RestController
 @RequestMapping("/api/admin")
 public class AdminApiController {
 	
 	private final EventCategoryService eventCategoryService;
+	private final VenueService venueService;
 
-	public AdminApiController(EventCategoryService eventCategoryService) {
+	public AdminApiController(
+			EventCategoryService eventCategoryService,
+			VenueService venueService) {
 		this.eventCategoryService = eventCategoryService;
+		this.venueService = venueService;
 	}
 	
 	// ------------ CATEGORIES ------------
@@ -54,4 +60,31 @@ public class AdminApiController {
 		eventCategoryService.deleteCategory(id);
 	}
 	
+	// ------------ VENUES ------------
+	@GetMapping("/venues")
+	public List<Venue> allVenues() {
+		return venueService.findAllVenues();
+	}
+	
+	@PostMapping("/venues")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Venue create(@RequestBody Venue venue) throws IllegalAccessException {
+		return venueService.createVenue(venue);
+	}
+	
+	@GetMapping("/venues/{id}")
+	public Venue findVenueById(@PathVariable Long id) {
+		return venueService.findVenueById(id);
+	}
+	
+	@PutMapping("/venues/{id}")
+	public Venue updateVenue(@PathVariable Long id, @RequestBody Venue venue) {
+		return venueService.updateVenue(id, venue);
+	}
+	
+	@DeleteMapping("/venues/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteVenue(@PathVariable Long id) {
+		venueService.deleteVenue(id);
+	}
 }
