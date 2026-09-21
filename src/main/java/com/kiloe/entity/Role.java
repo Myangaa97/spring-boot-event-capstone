@@ -1,5 +1,5 @@
 package com.kiloe.entity;
 
 public enum Role {
-	ADMIN, CUSTOMER
+	ROLE_ADMIN, ROLE_CUSTOMER
 }

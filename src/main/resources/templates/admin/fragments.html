@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+
+    <!-- ADMIN SIDEBAR FRAGMENT -->
+    <aside class="sidebar" th:fragment="sidebar(active)">
+        <div class="sidebar-brand">
+            <a th:href="@{/}" href="/" class="brand">
+                <div class="brand-logo">
+                    <i class="svg-icon fa-solid fa-calendar-days"></i>
+                </div>
+                <span class="brand-name">Kilo<span>E</span></span>
+            </a>
+            <p class="sidebar-tagline">Admin Dashboard</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a th:href="@{/admin/dashboard}" th:classappend="${active} == 'dashboard' ? ' active'" class="side-item">
+                <i class="svg-icon fa-solid fa-house"></i>
+                Dashboard
+            </a>
+            <a th:href="@{/admin/events}" th:classappend="${active} == 'events' ? ' active'" class="side-item">
+                <i class="svg-icon fa-solid fa-calendar"></i>
+                Events
+            </a>
+            <a th:href="@{/admin/bookings}" th:classappend="${active} == 'bookings' ? ' active'" class="side-item">
+                <i class="svg-icon fa-solid fa-clipboard-list"></i>
+                Bookings
+            </a>
+            <a th:href="@{/admin/categories}" th:classappend="${active} == 'categories' ? ' active'" class="side-item">
+                <i class="svg-icon fa-solid fa-tags"></i>
+                Categories
+            </a>
+            <a th:href="@{/admin/venues}" th:classappend="${active} == 'venues' ? ' active'" class="side-item">
+                <i class="svg-icon fa-solid fa-building"></i>
+                Venues
+            </a>
+            <a th:href="@{/admin/users}" th:classappend="${active} == 'users' ? ' active'" class="side-item">
+                <i class="svg-icon fa-solid fa-users"></i>
+                Users
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="avatar">A</div>
+                <div class="sidebar-user-info">
+                    <p class="sidebar-user-name">Admin</p>
+                    <p class="sidebar-user-mail">admin@kiloe.mn</p>
+                </div>
+            </div>
+            <a th:href="@{/logout}" class="side-item" style="margin-top: 4px;">
+                <i class="svg-icon fa-solid fa-arrow-right-from-bracket"></i>
+                Sign Out
+            </a>
+        </div>
+    </aside>
+
+</body>
+</html>

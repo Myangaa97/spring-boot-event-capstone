@@ -33,7 +33,7 @@ public class UserService {
 		user.setLastName(request.lastName().trim());
 		user.setEmail(email);
 		user.setPassword(passwordEncoder.encode(request.password()));
-		user.setRole(Role.CUSTOMER);
+		user.setRole(Role.ROLE_CUSTOMER);
 		user.setEnabled(true);
 		return userRepository.save(user);
 	}
