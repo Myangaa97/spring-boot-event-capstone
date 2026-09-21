@@ -23,6 +23,10 @@ public class Venue {
 	
 	@Column(nullable = false)
 	private Integer capacity;
+	
+	public Venue() {
+		
+	}
 
 	public Long getId() {
 		return id;
