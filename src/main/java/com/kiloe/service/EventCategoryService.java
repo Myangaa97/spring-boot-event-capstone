@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.kiloe.entity.EventCategory;
 import com.kiloe.exception.DuplicateResourceException;
-import com.kiloe.exception.ResourceNotfoundException;
+import com.kiloe.exception.ResourceNotFoundException;
 import com.kiloe.repository.EventCategoryRepository;
 
 @Service
@@ -45,7 +45,7 @@ public class EventCategoryService {
 		String name = newCategory.getName().trim();
 		
 		EventCategory foundCategory = eventCategoryRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotfoundException("Category not found with ID: " + id));
+				.orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + id));
 		
 		if(eventCategoryRepository.existsByNameAndIdNot(name, id)) {
 			throw new DuplicateResourceException("Category already exists with name: " + name);
@@ -57,7 +57,7 @@ public class EventCategoryService {
 	
 	public void deleteCategory(Long id) {
 		EventCategory foundCategory = eventCategoryRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotfoundException("Category not found with ID: " + id));
+				.orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + id));
 		
 		eventCategoryRepository.delete(foundCategory);
 	}
