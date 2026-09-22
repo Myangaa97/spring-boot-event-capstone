@@ -31,7 +31,7 @@ public class Event {
 	private LocalDate eventDate;
 	
 	@Column(nullable = false)
-	private LocalTime starTime;
+	private LocalTime startTime;
 	
 	@Column(nullable = false, precision = 10, scale = 2)
 	private BigDecimal ticketPrice;
@@ -84,7 +84,7 @@ public class Event {
 		this.description = description;
 	}
 
-	public LocalDate getEvenDate() {
+	public LocalDate getEventDate() {
 		return eventDate;
 	}
 
@@ -92,12 +92,12 @@ public class Event {
 		this.eventDate = eventDate;
 	}
 
-	public LocalTime getStarTime() {
-		return starTime;
+	public LocalTime getStartTime() {
+		return startTime;
 	}
 
-	public void setStarTime(LocalTime starTime) {
-		this.starTime = starTime;
+	public void setStartTime(LocalTime startTime) {
+		this.startTime = startTime;
 	}
 
 	public BigDecimal getTicketPrice() {
