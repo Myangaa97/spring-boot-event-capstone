@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.kiloe.entity.Venue;
 import com.kiloe.exception.DuplicateResourceException;
-import com.kiloe.exception.ResourceNotfoundException;
+import com.kiloe.exception.ResourceNotFoundException;
 import com.kiloe.repository.VenueRepository;
 
 @Service
@@ -61,7 +61,7 @@ public class VenueService {
 	
 	public void deleteVenue(Long id) {
 		Venue foundVenue = venueRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotfoundException("Venue not found with ID: " + id));
+				.orElseThrow(() -> new ResourceNotFoundException("Venue not found with ID: " + id));
 		venueRepository.delete(foundVenue);
 	}
 	

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - KiloE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="../../static/css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="/" class="brand">
+                    <div class="brand-logo">
+                        <i class="svg-icon fa-solid fa-ticket"></i>
+                    </div>
+                    <span class="brand-name">Kilo<span>E</span></span>
+                </a>
+                <div class="nav-links">
+                    <a th:href="@{/}" href="/" class="nav-link">Home</a>
+                    <a th:href="@{/customer/events}" href="events.html" class="nav-link active">Events</a>
+                </div>
+                <div class="nav-actions">
+                    <th:block sec:authorize="isAnonymous()">
+                        <a th:href="@{/login}" href="login.html" class="btn btn-secondary">Sign In</a>
+                        <a th:href="@{/register}" href="register.html" class="btn btn-primary">Sign Up</a>
+                    </th:block>
+                    <th:block sec:authorize="isAuthenticated()">
+                        <span sec:authentication="name" style="font-size: 14px; color: var(--text-muted, #64748b);">user@example.com</span>
+                        <a th:href="@{/customer/dashboard}" class="btn btn-outline">Dashboard</a>
+                        <a th:href="@{/logout}" class="btn btn-secondary">Sign Out</a>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">Events</h1>
+            <p class="page-subtitle">Browse all active events</p>
+        </div>
+    </div>
+
+    <!-- FILTER + GRID -->
+    <div class="container section" style="padding-top: 32px;">
+        <div class="listing-toolbar">
+            <div class="search-box" style="flex: 1;">
+                <i class="svg-icon fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search events..." class="search-input">
+            </div>
+            <div class="chip-row" id="categoryFilters">
+                <button data-category="all" class="chip active">All</button>
+            </div>
+        </div>
+
+        <div class="grid-cards" id="eventsGrid"></div>
+
+        <div id="emptyState" class="empty-state hidden">
+            <div class="empty-icon">
+                <i class="svg-icon fa-regular fa-face-frown"></i>
+            </div>
+            <p style="font-size: 18px;">No events found</p>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom"><p>&copy; 2026 KiloE. All rights reserved.</p></div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/customer-events.js}" src="../../static/js/customer-events.js"></script>
+</body>
+</html>

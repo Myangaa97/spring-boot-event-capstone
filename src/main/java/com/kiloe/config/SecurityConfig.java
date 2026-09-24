@@ -22,10 +22,10 @@ public class SecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSuccessHandler successHandler) throws Exception {
 		http
 			.authorizeHttpRequests(auth -> auth
-					.requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
+					.requestMatchers("/api/public/**", "/", "/home", "/login", "/register", "/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
 					.requestMatchers("/api/admin/**", "/admin/**").hasRole("ADMIN")
-					.requestMatchers("/customer/**").hasRole("CUSTOMER")
-					.anyRequest().authenticated())
+					.requestMatchers("/customer/**").authenticated()
+					.anyRequest().permitAll())
 			
 			.formLogin(form -> form
 					.loginPage("/login")
