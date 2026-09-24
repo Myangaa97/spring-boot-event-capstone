@@ -396,7 +396,7 @@ function openEventModal(event) {
 
     if (event.availableTickets > 0) {
         const bookButton = document.createElement('a');
-        bookButton.href = `/events/${event.id}`;
+        bookButton.href = `/customer/events/${event.id}`;
         bookButton.className = 'btn btn-accent';
         bookButton.textContent = 'Book Now';
         footer.appendChild(bookButton);
