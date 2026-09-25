@@ -53,9 +53,15 @@
                 <i class="svg-icon fa-solid fa-magnifying-glass"></i>
                 <input type="text" id="searchInput" placeholder="Search events..." class="search-input">
             </div>
-            <div class="chip-row" id="categoryFilters">
-                <button data-category="all" class="chip active">All</button>
-            </div>
+            <input type="date" id="dateFilter" class="form-control" style="max-width: 180px;" title="Filter by date">
+            <select id="venueFilter" class="form-control" style="max-width: 200px;">
+                <option value="">All venues</option>
+            </select>
+            <button type="button" id="clearFilters" class="btn btn-secondary btn-sm">Clear</button>
+        </div>
+
+        <div class="chip-row" id="categoryFilters" style="margin-bottom: 24px;">
+            <button data-category="all" class="chip active">All</button>
         </div>
 
         <div class="grid-cards" id="eventsGrid"></div>

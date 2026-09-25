@@ -1,7 +1,10 @@
 package com.kiloe.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +16,7 @@ import com.kiloe.entity.Venue;
 import com.kiloe.repository.EventCategoryRepository;
 import com.kiloe.repository.EventRepository;
 import com.kiloe.repository.VenueRepository;
+import com.kiloe.specification.EventSpecification;
 
 @Service
 @Transactional
@@ -32,8 +36,32 @@ public class EventService {
 
 	@Transactional
 	public List<EventResponse> findByPublished() {
-		return eventRepository
-				.findByPublishedTrueAndEventDateGreaterThanEqualOrderByEventDateAsc(java.time.LocalDate.now())
+		return searchPublishedEvents(null, null, null, null);
+	}
+
+	@Transactional
+	public List<EventResponse> searchPublishedEvents(String title, LocalDate date, Long venueId, Long categoryId) {
+		Specification<Event> spec = Specification.where(EventSpecification.isPublished());
+
+		if (title != null && !title.isBlank()) {
+			spec = spec.and(EventSpecification.titleContains(title.trim()));
+		}
+
+		if (date != null) {
+			spec = spec.and(EventSpecification.eventDateEquals(date));
+		} else {
+			spec = spec.and(EventSpecification.eventDateOnOrAfter(LocalDate.now()));
+		}
+
+		if (venueId != null) {
+			spec = spec.and(EventSpecification.venueIdEquals(venueId));
+		}
+
+		if (categoryId != null) {
+			spec = spec.and(EventSpecification.categoryIdEquals(categoryId));
+		}
+
+		return eventRepository.findAll(spec, Sort.by(Sort.Direction.ASC, "eventDate"))
 				.stream()
 				.filter(e -> !hasStarted(e))
 				.map(this::toResponse)

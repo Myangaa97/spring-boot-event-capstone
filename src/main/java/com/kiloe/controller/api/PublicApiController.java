@@ -4,10 +4,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kiloe.dto.EventResponse;
@@ -30,11 +32,12 @@ public class PublicApiController {
 	}
 	
 	@GetMapping("/events")
-	public List<EventResponse> getPublishedEvents() {
-		return eventService.findByPublished()
-				.stream()
-				.filter(event -> !hasStarted(event))
-				.toList();
+	public List<EventResponse> getPublishedEvents(
+			@RequestParam(required = false) String title,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+			@RequestParam(required = false) Long venue,
+			@RequestParam(required = false) Long category) {
+		return eventService.searchPublishedEvents(title, date, venue, category);
 	}
 	
 	@GetMapping("/events/{id}")
