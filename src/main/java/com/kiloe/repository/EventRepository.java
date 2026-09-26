@@ -3,14 +3,22 @@ package com.kiloe.repository;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.kiloe.entity.Event;
 import com.kiloe.entity.EventCategory;
 import com.kiloe.entity.Venue;
 
-public interface EventRepository extends JpaRepository<Event, Long> {
-	
+public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
+
+	@EntityGraph(attributePaths = { "category", "venue" })
+	Page<Event> findAll(Specification<Event> spec, Pageable pageable);
+
 	List<Event> findByCategoryAndPublishedTrueOrderByEventDateAsc(EventCategory category);
 	
 	List<Event> findByPublishedTrueAndEventDateGreaterThanEqualOrderByEventDateAsc(LocalDate date);

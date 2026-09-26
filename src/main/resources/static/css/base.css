@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Reset & Base + Utilities + Container
+   ========================================================================== */
+
+/* ---------- Reset & Base ---------- */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	font-family: var(--font);
+	background-color: var(--gray-50);
+	color: var(--gray-800);
+	line-height: 1.5;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	-webkit-font-smoothing: antialiased;
+}
+
+img {
+	display: block;
+	max-width: 100%;
+	background-color: var(--gray-200);
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+button {
+	font-family: inherit;
+	cursor: pointer;
+	border: none;
+	background: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	color: var(--gray-900);
+	line-height: 1.2;
+}
+
+svg,
+.svg-icon {
+	flex-shrink: 0;
+}
+
+.hidden {
+	display: none !important;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.mt-auto {
+	margin-top: auto;
+}
+
+main {
+	flex: 1;
+}
+
+/* ---------- Container ---------- */
+.container {
+	width: 100%;
+	max-width: 1280px;
+	margin: 0 auto;
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+@media (min-width: 640px) {
+	.container {
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+}
+
+@media (min-width: 1024px) {
+	.container {
+		padding-left: 32px;
+		padding-right: 32px;
+	}
+}

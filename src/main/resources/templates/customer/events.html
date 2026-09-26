@@ -53,9 +53,15 @@
                 <i class="svg-icon fa-solid fa-magnifying-glass"></i>
                 <input type="text" id="searchInput" placeholder="Search events..." class="search-input">
             </div>
-            <div class="chip-row" id="categoryFilters">
-                <button data-category="all" class="chip active">All</button>
-            </div>
+            <input type="date" id="dateFilter" class="form-control" style="max-width: 180px;" title="Filter by date">
+            <select id="venueFilter" class="form-control" style="max-width: 200px;">
+                <option value="">All venues</option>
+            </select>
+            <button type="button" id="clearFilters" class="btn btn-secondary btn-sm">Clear</button>
+        </div>
+
+        <div class="chip-row" id="categoryFilters" style="margin-bottom: 24px;">
+            <button data-category="all" class="chip active">All</button>
         </div>
 
         <div class="grid-cards" id="eventsGrid"></div>
@@ -66,6 +72,18 @@
             </div>
             <p style="font-size: 18px;">No events found</p>
         </div>
+
+        <nav class="pagination" id="pagination" hidden aria-label="Events pagination">
+            <span class="pagination-info" id="pageInfo"></span>
+            <div class="pagination-buttons">
+                <button type="button" id="prevPage" class="btn btn-secondary btn-sm">
+                    <i class="svg-icon fa-solid fa-chevron-left"></i> Prev
+                </button>
+                <button type="button" id="nextPage" class="btn btn-secondary btn-sm">
+                    Next <i class="svg-icon fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </nav>
     </div>
 
     <!-- FOOTER -->
