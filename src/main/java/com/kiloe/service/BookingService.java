@@ -1,5 +1,6 @@
 package com.kiloe.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import com.kiloe.entity.Booking;
 import com.kiloe.entity.BookingStatus;
 import com.kiloe.entity.Event;
 import com.kiloe.entity.User;
+import com.kiloe.exception.BusinessRuleException;
 import com.kiloe.repository.BookingRepository;
 import com.kiloe.repository.EventRepository;
 
@@ -47,16 +49,18 @@ public class BookingService {
 		}
 		
 		if (event.getAvailableTickets() < ticketQuantity) {
-			throw new IllegalStateException("Not enough ticket available");
+			throw new BusinessRuleException("Not enough ticket available");
 		}
 		
 		event.setAvailableTickets(event.getAvailableTickets() - ticketQuantity);
+		BigDecimal totalPrice = event.getTicketPrice().multiply(BigDecimal.valueOf(ticketQuantity));
 		
 		Booking booking = new Booking();
 		booking.setUser(user);
 		booking.setEvent(event);
 		booking.setTicketQuantity(ticketQuantity);
 		booking.setUnitPrice(event.getTicketPrice());
+		booking.setTotalPrice(totalPrice);
 		booking.setStatus(BookingStatus.CONFIRMED);
 		booking.setCreatedAt(LocalDateTime.now());
 		
