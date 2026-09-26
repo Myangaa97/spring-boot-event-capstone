@@ -36,6 +36,9 @@ public class Booking {
 	@Column(nullable = false, precision = 10, scale = 2)
 	private BigDecimal unitPrice;
 	
+	@Column(nullable = false, precision = 10, scale = 2)
+	private BigDecimal totalPrice;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20)
 	private BookingStatus status;
@@ -85,6 +88,14 @@ public class Booking {
 
 	public void setUnitPrice(BigDecimal unitPrice) {
 		this.unitPrice = unitPrice;
+	}
+
+	public BigDecimal getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(BigDecimal totalPrice) {
+		this.totalPrice = totalPrice;
 	}
 
 	public BookingStatus getStatus() {

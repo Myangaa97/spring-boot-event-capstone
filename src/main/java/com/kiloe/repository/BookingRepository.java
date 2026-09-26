@@ -9,7 +9,7 @@ import com.kiloe.entity.User;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 	
-	List<Booking> findByUserOrOrderByCreatedAtDesc(User user);
+	List<Booking> findByUserOrderByCreatedAtDesc(User user);
 	
 	List<Booking> findAllByOrderByCreatedAtDesc();
 	
