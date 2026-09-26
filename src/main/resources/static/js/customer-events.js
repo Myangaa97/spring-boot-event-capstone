@@ -1,8 +1,10 @@
 "use strict";
 
 const PUBLIC_EVENTS_URL = '/api/public/events';
+const PUBLIC_SEARCH_URL = '/api/public/events/search';
 const PUBLIC_VENUES_URL = '/api/public/venues';
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=500&fit=crop';
+const PAGE_SIZE = 9;
 
 const categoryFilters = document.querySelector('#categoryFilters');
 const eventsGrid = document.querySelector('#eventsGrid');
@@ -11,8 +13,15 @@ const searchInput = document.querySelector('#searchInput');
 const dateFilter = document.querySelector('#dateFilter');
 const venueFilter = document.querySelector('#venueFilter');
 const clearBtn = document.querySelector('#clearFilters');
+const pagination = document.querySelector('#pagination');
+const pageInfo = document.querySelector('#pageInfo');
+const prevPageBtn = document.querySelector('#prevPage');
+const nextPageBtn = document.querySelector('#nextPage');
 
 let activeCategory = "all";
+let currentPage = 0;
+let totalPages = 0;
+let inFlight = null;
 let debounceTimer = null;
 
 function formatPrice(price) {
@@ -42,8 +51,8 @@ function statusBadgeClass(event) {
     return 'badge badge-green';
 }
 
-async function fetchJson(url) {
-    const response = await fetch(url);
+async function fetchJson(url, signal) {
+    const response = await fetch(url, { signal });
     if (!response.ok) {
         throw new Error(`Request failed: ${url}`);
     }
@@ -102,8 +111,10 @@ async function loadCategories() {
     }
 }
 
-function buildQuery() {
+function buildQuery(page) {
     const params = new URLSearchParams();
+    params.set('page', page);
+    params.set('size', PAGE_SIZE);
 
     const title = searchInput.value.trim();
     if (title) {
@@ -119,19 +130,77 @@ function buildQuery() {
         params.set('category', activeCategory);
     }
 
-    const qs = params.toString();
-    return qs ? `?${qs}` : '';
+    return params.toString();
+}
+
+function syncUrl() {
+    const qs = buildQuery(currentPage);
+    history.replaceState(null, '', `${location.pathname}?${qs}`);
+}
+
+function restoreFromUrl() {
+    const params = new URLSearchParams(location.search);
+
+    const title = params.get('title');
+    if (title) {
+        searchInput.value = title;
+    }
+
+    const date = params.get('date');
+    if (date) {
+        dateFilter.value = date;
+    }
+
+    const venue = params.get('venue');
+    if (venue) {
+        venueFilter.value = venue;
+    }
+
+    const category = params.get('category');
+    if (category) {
+        activeCategory = category;
+    }
+
+    const page = Number.parseInt(params.get('page'), 10);
+    currentPage = Number.isNaN(page) || page < 0 ? 0 : page;
+}
+
+function setActiveCategoryChip(category) {
+    for (let chip of categoryFilters.querySelectorAll('.chip')) {
+        chip.classList.toggle('active', chip.dataset.category === category);
+    }
 }
 
 async function loadFilteredEvents() {
-    let events;
-    try {
-        events = await fetchJson(PUBLIC_EVENTS_URL + buildQuery());
-    } catch (error) {
-        console.error("Failed to load events:", error);
-        events = [];
+    if (inFlight) {
+        inFlight.abort();
     }
-    renderEvents(events);
+    const controller = new AbortController();
+    inFlight = controller;
+
+    let page;
+    try {
+        page = await fetchJson(`${PUBLIC_SEARCH_URL}?${buildQuery(currentPage)}`, controller.signal);
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            return;
+        }
+        console.error("Failed to load events:", error);
+        page = { content: [], number: 0, size: PAGE_SIZE, totalPages: 1, totalElements: 0, first: true, last: true };
+    } finally {
+        if (inFlight === controller) {
+            inFlight = null;
+        }
+    }
+
+    if (page.totalPages > 0) {
+        currentPage = Math.min(page.number, page.totalPages - 1);
+    }
+    totalPages = page.totalPages;
+
+    renderEvents(page.content);
+    renderPagination(page);
+    syncUrl();
 }
 
 function buildEventCard(event) {
@@ -187,14 +256,34 @@ function handleCategoryClick(clickEvent) {
         return;
     }
 
-    const allChips = categoryFilters.querySelectorAll('.chip');
-    for (let c of allChips) {
-        c.classList.remove('active');
-    }
-    chip.classList.add('active');
-
+    setActiveCategoryChip(chip.dataset.category);
     activeCategory = chip.dataset.category;
+    currentPage = 0;
     loadFilteredEvents();
+}
+
+function goToPage(page) {
+    if (page < 0 || page >= totalPages || page === currentPage) {
+        return;
+    }
+    currentPage = page;
+    loadFilteredEvents();
+    eventsGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderPagination(page) {
+    const start = page.totalElements === 0 ? 0 : page.number * page.size + 1;
+    const end = Math.min((page.number + 1) * page.size, page.totalElements);
+
+    if (page.totalElements === 0) {
+        pagination.hidden = true;
+        return;
+    }
+
+    pageInfo.textContent = `Showing ${start}-${end} of ${page.totalElements}`;
+    pagination.hidden = false;
+    prevPageBtn.disabled = page.first;
+    nextPageBtn.disabled = page.last;
 }
 
 function resetFilters() {
@@ -202,24 +291,35 @@ function resetFilters() {
     dateFilter.value = "";
     venueFilter.value = "";
     activeCategory = "all";
+    currentPage = 0;
 
-    const allChips = categoryFilters.querySelectorAll('.chip');
-    for (let c of allChips) {
-        c.classList.toggle('active', c.dataset.category === "all");
-    }
+    setActiveCategoryChip("all");
 
     loadFilteredEvents();
 }
 
-searchInput.addEventListener("input", debounce(loadFilteredEvents));
-dateFilter.addEventListener("change", loadFilteredEvents);
-venueFilter.addEventListener("change", loadFilteredEvents);
+searchInput.addEventListener("input", debounce(() => {
+    currentPage = 0;
+    loadFilteredEvents();
+}));
+dateFilter.addEventListener("change", () => {
+    currentPage = 0;
+    loadFilteredEvents();
+});
+venueFilter.addEventListener("change", () => {
+    currentPage = 0;
+    loadFilteredEvents();
+});
 clearBtn.addEventListener("click", resetFilters);
+prevPageBtn.addEventListener("click", () => goToPage(currentPage - 1));
+nextPageBtn.addEventListener("click", () => goToPage(currentPage + 1));
 document.addEventListener("click", handleCategoryClick);
 
 async function init() {
+    restoreFromUrl();
     await loadVenues();
     await loadCategories();
+    setActiveCategoryChip(activeCategory);
     await loadFilteredEvents();
 }
 

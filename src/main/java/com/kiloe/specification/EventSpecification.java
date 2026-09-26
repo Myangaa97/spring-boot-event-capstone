@@ -17,9 +17,7 @@ public class EventSpecification {
 
 	public static Specification<Event> titleContains(String title) {
 		return (root, query, criteriaBuilder) ->
-				criteriaBuilder.like(
-						criteriaBuilder.lower(root.get("title")),
-						"%" + title.toLowerCase() + "%");
+				criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + title.toLowerCase() + "%");
 	}
 
 	public static Specification<Event> eventDateEquals(LocalDate date) {

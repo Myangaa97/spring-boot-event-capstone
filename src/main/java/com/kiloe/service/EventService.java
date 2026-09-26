@@ -3,6 +3,8 @@ package com.kiloe.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ import com.kiloe.specification.EventSpecification;
 @Service
 @Transactional
 public class EventService {
+
+	private static final Sort EVENT_DATE_ASC = Sort.by(Sort.Direction.ASC, "eventDate");
 
 	private final EventRepository eventRepository;
 	private final EventCategoryRepository eventCategoryRepository;
@@ -41,7 +45,21 @@ public class EventService {
 
 	@Transactional
 	public List<EventResponse> searchPublishedEvents(String title, LocalDate date, Long venueId, Long categoryId) {
-		Specification<Event> spec = Specification.where(EventSpecification.isPublished());
+		return eventRepository.findAll(publishedSpec(title, date, venueId, categoryId), EVENT_DATE_ASC)
+				.stream()
+				.filter(e -> !hasStarted(e))
+				.map(this::toResponse)
+				.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public Page<EventResponse> findPublishedPage(String title, LocalDate date, Long venueId, Long categoryId,
+			Pageable pageable) {
+		return eventRepository.findAll(publishedSpec(title, date, venueId, categoryId), pageable).map(this::toResponse);
+	}
+
+	private Specification<Event> publishedSpec(String title, LocalDate date, Long venueId, Long categoryId) {
+		Specification<Event> spec = EventSpecification.isPublished();
 
 		if (title != null && !title.isBlank()) {
 			spec = spec.and(EventSpecification.titleContains(title.trim()));
@@ -61,11 +79,7 @@ public class EventService {
 			spec = spec.and(EventSpecification.categoryIdEquals(categoryId));
 		}
 
-		return eventRepository.findAll(spec, Sort.by(Sort.Direction.ASC, "eventDate"))
-				.stream()
-				.filter(e -> !hasStarted(e))
-				.map(this::toResponse)
-				.toList();
+		return spec;
 	}
 
 	public boolean hasStarted(Event event) {

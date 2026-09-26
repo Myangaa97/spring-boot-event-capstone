@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +42,16 @@ public class PublicApiController {
 			@RequestParam(required = false) Long venue,
 			@RequestParam(required = false) Long category) {
 		return eventService.searchPublishedEvents(title, date, venue, category);
+	}
+	
+	@GetMapping("/events/search")
+	public Page<EventResponse> searchPublishedEvents(
+			@RequestParam(required = false) String title,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+			@RequestParam(required = false) Long venue,
+			@RequestParam(required = false) Long category,
+			@PageableDefault(size = 9, sort = "eventDate", direction = Sort.Direction.ASC) Pageable pageable) {
+		return eventService.findPublishedPage(title, date, venue, category, pageable);
 	}
 	
 	@GetMapping("/events/{id}")

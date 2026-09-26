@@ -136,6 +136,37 @@
 	transform: scale(0.95);
 }
 
+/* ---------- Pagination ---------- */
+.pagination {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 32px;
+}
+
+.pagination[hidden] {
+	display: none;
+}
+
+.pagination-info {
+	font-size: 14px;
+	color: var(--gray-500);
+}
+
+.pagination-buttons {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.pagination .btn[disabled] {
+	opacity: 0.45;
+	cursor: not-allowed;
+	box-shadow: none;
+}
+
 /* ---------- Grids ---------- */
 .grid-cards {
 	display: grid;
