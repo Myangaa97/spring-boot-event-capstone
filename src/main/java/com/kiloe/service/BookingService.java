@@ -14,7 +14,6 @@ import com.kiloe.exception.BusinessRuleException;
 import com.kiloe.repository.BookingRepository;
 import com.kiloe.repository.EventRepository;
 
-
 @Service
 @Transactional
 public class BookingService {
@@ -52,7 +51,11 @@ public class BookingService {
 			throw new BusinessRuleException("Not enough ticket available");
 		}
 		
-		event.setAvailableTickets(event.getAvailableTickets() - ticketQuantity);
+		int reserved = eventRepository.decrementAvailableTickets(event.getId(), ticketQuantity);
+		if (reserved == 0) {
+			throw new BusinessRuleException("Not enough ticket available");
+		}
+		
 		BigDecimal totalPrice = event.getTicketPrice().multiply(BigDecimal.valueOf(ticketQuantity));
 		
 		Booking booking = new Booking();
@@ -66,5 +69,4 @@ public class BookingService {
 		
 		return bookingRepository.save(booking);	
 	}
-	
 }

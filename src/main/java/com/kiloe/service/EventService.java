@@ -10,11 +10,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kiloe.dto.AvailabilityResponse;
 import com.kiloe.dto.EventRequest;
 import com.kiloe.dto.EventResponse;
 import com.kiloe.entity.Event;
 import com.kiloe.entity.EventCategory;
 import com.kiloe.entity.Venue;
+import com.kiloe.exception.ResourceNotFoundException;
 import com.kiloe.repository.EventCategoryRepository;
 import com.kiloe.repository.EventRepository;
 import com.kiloe.repository.VenueRepository;
@@ -103,6 +105,16 @@ public class EventService {
 		Event event = eventRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Event not found with ID: " + id));
 		return toResponse(event);
+	}
+
+	@Transactional(readOnly = true)
+	public AvailabilityResponse findAvailability(Long id) {
+		Event event = eventRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Event not found with ID: " + id));
+		return new AvailabilityResponse(
+				event.getId(),
+				event.getAvailableTickets(),
+				event.getTotalTickets());
 	}
 
 	public EventResponse create(EventRequest request) {

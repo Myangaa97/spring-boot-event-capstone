@@ -9,6 +9,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.kiloe.entity.Event;
 import com.kiloe.entity.EventCategory;
@@ -30,4 +33,9 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 	boolean existsByCategoryId(Long categoryId);
 	
 	boolean existsByVenueId(Long venueId);
+	
+	@Modifying(flushAutomatically = true, clearAutomatically = true)
+	@Query("update Event e set e.availableTickets = e.availableTickets - :quantity "
+			+ "where e.id = :eventId and e.availableTickets >= :quantity")
+	int decrementAvailableTickets(@Param("eventId") Long eventId, @Param("quantity") int quantity);
 }
